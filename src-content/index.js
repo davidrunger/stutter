@@ -3,7 +3,7 @@ import Stutter from './lib/stutter'
 import UI from './lib/ui'
 const { convert } = require('html-to-text')
 
-function playStutter (text, locale) {
+function playStutter (text, locale, startText) {
   if (stutter) {
     stutter.destroy()
   }
@@ -11,6 +11,11 @@ function playStutter (text, locale) {
   stutter = new Stutter(ui, locale)
   stutter.setText(text)
   stutter.play()
+  if (startText) {
+    stutter.pause()
+    stutter.block.index = stutter.getStartIndex(startText)
+    stutter.play()
+  }
 }
 
 function onMessage (request) {
@@ -20,32 +25,32 @@ function onMessage (request) {
       playStutter(request.selectedText, request.locale)
       break
     case 'stutterFullPage':
-      let selection = getSelectionText()
+      // close document switch Readability is destructive
+      var documentClone = document.cloneNode(true)
+      var article = new Readability(documentClone).parse()
+      var pureText = convert(article.content, {
+        selectors: [
+          {
+            selector: 'a',
+            options: {
+              ignoreHref: true,
+              noAnchorUrl: true,
+              noLinkBrackets: true
+            }
+          },
+          {
+            selector: 'img',
+            format: 'skip'
+          }
+        ],
+        wordwrap: false
+      })
+      // Pass article content to Stutter
+      const selection = getSelectionText()
       if (selection) {
         console.log('Selection:', selection)
-        playStutter(selection, request.locale)
+        playStutter(pureText, request.locale, selection)
       } else {
-        // close document switch Readability is destructive
-        var documentClone = document.cloneNode(true)
-        var article = new Readability(documentClone).parse()
-        var pureText = convert(article.content, {
-          selectors: [
-            {
-              selector: 'a',
-              options: {
-                ignoreHref: true,
-                noAnchorUrl: true,
-                noLinkBrackets: true
-              }
-            },
-            {
-              selector: 'img',
-              format: 'skip'
-            }
-          ],
-          wordwrap: false
-        })
-        // Pass article content to Stutter
         playStutter(pureText, request.locale)
       }
       break
