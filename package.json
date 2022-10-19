@@ -8,7 +8,7 @@
   "license": "GPL-3.0",
   "private": false,
   "scripts": {
-    "extension": "web-ext run --firefox=firefoxdeveloperedition --verbose",
+    "extension": "web-ext run --firefox=firefoxdeveloperedition",
     "package": "yarn build && web-ext build --overwrite-dest && git archive --format zip --output \"./web-ext-artifacts/$(basename \"$(pwd)\")-\"$(awk -F\": \" '/\"version\"/ {print $2}' manifest.json | sed 's/^\"//' | sed 's/\".*//')\"-src.zip\" master",
     "build": "webpack --config 'webpack.bg.js' && webpack --config 'webpack.content.js' && webpack --config 'webpack.options.js'",
     "test": "eslint \"./src-*/*.js\"",
