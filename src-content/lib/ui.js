@@ -44,6 +44,20 @@ function toHHMMSS (t) {
 }
 
 export default class UI extends EventEmitter {
+  static TAGS_TO_HIGHLIGHT = [
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'div',
+    'p',
+    'li',
+    'th',
+    'td'
+  ]
+
   constructor () {
     super()
     this.holder = document.createElement('div')
@@ -56,6 +70,20 @@ export default class UI extends EventEmitter {
     this.bindDOM()
     this.wakeLock = null
     this.currentTextFragment = ''
+    this.mapTagsForHighlighting()
+  }
+
+  mapTagsForHighlighting () {
+    let elements = []
+    UI.TAGS_TO_HIGHLIGHT.forEach(tag => {
+      elements = elements.concat([...document.querySelectorAll(tag)])
+    })
+
+    this.elementMap = new Map()
+    for (const el of elements) {
+      const firstFourWords = el.innerText.split(' ').slice(0, 4).join(' ')
+      this.elementMap.set(firstFourWords, el)
+    }
   }
 
   bindDOM () {
@@ -228,7 +256,23 @@ export default class UI extends EventEmitter {
     }
   }
 
+  highlight (nextFourWords) {
+    const element = this.elementMap.get(nextFourWords)
+    if (element) {
+      this.removeHighlighting()
+      element.classList.add('__stutter_highlighted_text')
+    }
+  }
+
+  removeHighlighting () {
+    for (const el of [...document.querySelectorAll('.__stutter_highlighted_text')]) {
+      el.classList.remove('__stutter_highlighted_text')
+    }
+  }
+
   hide () {
+    this.removeHighlighting()
+
     if (this.holder.parentNode) {
       this.holder.parentNode.removeChild(this.holder)
       if (this.wakeLock) {

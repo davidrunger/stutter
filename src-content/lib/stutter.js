@@ -185,6 +185,11 @@ export default class Stutter {
       }
       this.ui.show(this.currentWord, n)
       this.ui.progress = parseInt(this.block.progress * 100, 10)
+      const nextFourWords =
+        this.block.words.slice(this.block.index, this.block.index + 4)
+          .map(wordObject => wordObject.val)
+          .join(' ')
+      this.ui.highlight(nextFourWords)
     }
   }
 

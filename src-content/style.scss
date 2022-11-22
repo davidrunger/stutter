@@ -1,5 +1,10 @@
 @import "themes/themes";
 
+.__stutter_highlighted_text {
+	background: black;
+	color: white !important; // important so even links etc have white text
+}
+
 #__stutter {
 	all: initial;
 	background: var(--barBG);
