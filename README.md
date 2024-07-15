@@ -58,6 +58,26 @@ Many other timing options and theming are available inside the full settings pan
 
 You can leave feedback using [GitHub issues](https://github.com/jamestomasino/stutter/issues). If you would like to discuss problems or features with me directly, you can visit the [#stutter IRC channel on Libera.Chat](https://kiwiirc.com/nextclient/#irc://irc.libera.chat/#stutter).
 
+## How to develop
+
+Run in separate tabs:
+
+```
+webpack --config 'webpack.options.js' --watch
+webpack --config 'webpack.content.js' --watch
+webpack --config 'webpack.bg.js' --watch
+```
+
+Then in another tab (but maybe quit any other Firefox windows before doing this):
+
+```
+web-ext run --firefox=firefoxdeveloperedition
+```
+
+`console.log` statements should appear in the normal JavaScript console.
+
+Hit `R` while focused on the `web-ext` tab to reload the extension in the browser.
+
 ## Contributing
 
 This is an open source project and we welcome contributions. See the [Wiki](https://github.com/jamestomasino/stutter/wiki) for ways to contribute:

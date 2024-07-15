@@ -57,6 +57,35 @@ export default class Stutter {
     }
   }
 
+  getStartIndex (val) {
+    const blockWords = this.block.words
+    const targetWords = val.split(/\s+/)
+
+    const isStartingIndex = (index) => {
+      return targetWords.every((targetWord, i) => {
+        const blockWord = blockWords[index + i].val
+        if (i === 0) {
+          return blockWord.endsWith(targetWord)
+        } else if (i === targetWords.length - 1) {
+          return blockWord.startsWith(targetWord)
+        } else {
+          return blockWord === targetWord
+        }
+      })
+    }
+
+    let startingIndex = null
+    blockWords.some((_word, i) => {
+      const isStartIndex = isStartingIndex(i)
+      if (isStartIndex) {
+        startingIndex = i
+      }
+      return isStartIndex
+    })
+
+    return startingIndex
+  }
+
   playPauseToggle () {
     if (this.isPlaying) {
       this.pause()
@@ -156,6 +185,11 @@ export default class Stutter {
       }
       this.ui.show(this.currentWord, n)
       this.ui.progress = parseInt(this.block.progress * 100, 10)
+      const nextFourWords =
+        this.block.words.slice(this.block.index, this.block.index + 4)
+          .map(wordObject => wordObject.val)
+          .join(' ')
+      this.ui.highlight(nextFourWords)
     }
   }
 
